@@ -10,20 +10,34 @@ mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
-hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
+hands = mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.1)
 
 DATA_DIR = './data'
+
+if not os.path.exists(DATA_DIR) or not os.listdir(DATA_DIR):
+    print(f"Error: Data directory '{DATA_DIR}' is empty or does not exist.")
+    print("Please run collect_imgs.py to collect images first.")
+    exit()
 
 data = []
 labels = []
 for dir_ in os.listdir(DATA_DIR):
-    for img_path in os.listdir(os.path.join(DATA_DIR, dir_)):
+    dir_path = os.path.join(DATA_DIR, dir_)
+    if not os.path.isdir(dir_path):
+        continue
+    if not os.listdir(dir_path):
+        print(f"Warning: Directory '{dir_}' is empty, skipping.")
+        continue
+    for img_path in os.listdir(dir_path):
         data_aux = []
 
         x_ = []
         y_ = []
 
-        img = cv2.imread(os.path.join(DATA_DIR, dir_, img_path))
+        img = cv2.imread(os.path.join(dir_path, img_path))
+        if img is None:
+            print(f"Warning: Could not read image {img_path}, skipping.")
+            continue
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         results = hands.process(img_rgb)
@@ -44,7 +58,8 @@ for dir_ in os.listdir(DATA_DIR):
 
             data.append(data_aux)
             labels.append(dir_)
+        else:
+            print(f"Warning: No landmarks detected for image {img_path} in directory {dir_}.")
 
-f = open('data.pickle', 'wb')
-pickle.dump({'data': data, 'labels': labels}, f)
-f.close()
+with open('data.pickle', 'wb') as f:
+    pickle.dump({'data': data, 'labels': labels}, f)

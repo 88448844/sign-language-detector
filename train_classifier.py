@@ -1,12 +1,16 @@
 import pickle
-
+import os
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import numpy as np
 
+if not os.path.exists('data.pickle'):
+    print("Error: data.pickle not found. Please run create_dataset.py first.")
+    exit()
 
-data_dict = pickle.load(open('./data.pickle', 'rb'))
+with open('data.pickle', 'rb') as f:
+    data_dict = pickle.load(f)
 
 data = np.asarray(data_dict['data'])
 labels = np.asarray(data_dict['labels'])
@@ -21,8 +25,7 @@ y_predict = model.predict(x_test)
 
 score = accuracy_score(y_predict, y_test)
 
-print('{}% of samples were classified correctly !'.format(score * 100))
+print(f'{score * 100}% of samples were classified correctly !')
 
-f = open('model.p', 'wb')
-pickle.dump({'model': model}, f)
-f.close()
+with open('model.p', 'wb') as f:
+    pickle.dump({'model': model}, f)

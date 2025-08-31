@@ -1,0 +1,13 @@
+# Ignore the data folder, which contains the user's images
+data/
+
+# Ignore the dataset and model files
+data.pickle
+model.p
+
+# Ignore Python artifacts
+__pycache__/
+*.pyc
+
+# Ignore the virtual environment
+env310/

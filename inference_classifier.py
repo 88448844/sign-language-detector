@@ -1,21 +1,36 @@
 import pickle
-
+import os
 import cv2
 import mediapipe as mp
 import numpy as np
 
-model_dict = pickle.load(open('./model.p', 'rb'))
+if not os.path.exists('model.p'):
+    print("Error: model.p not found. Please run train_classifier.py first.")
+    exit()
+
+with open('model.p', 'rb') as f:
+    model_dict = pickle.load(f)
 model = model_dict['model']
 
-cap = cv2.VideoCapture(2)
+
+cap = None
+for i in range(10):
+    cap = cv2.VideoCapture(i)
+    if cap.isOpened():
+        break
+
+if not cap.isOpened():
+    print("Error: Could not open video stream.")
+    exit()
+
 
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
-hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
+hands = mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.3)
 
-labels_dict = {0: 'A', 1: 'B', 2: 'L'}
+labels_dict = {i: chr(i + 65) for i in range(26)}
 while True:
 
     data_aux = []
@@ -23,6 +38,9 @@ while True:
     y_ = []
 
     ret, frame = cap.read()
+    if not ret:
+        print("Error: Failed to capture frame.")
+        break
 
     H, W, _ = frame.shape
 
