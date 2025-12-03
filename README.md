@@ -1,6 +1,6 @@
 # Sign Language Detector
 
-This is a Python-based sign language detector that uses computer vision and machine learning to recognize and classify sign language gestures in real-time.
+This is a Python based sign language detector that uses computer vision and machine learning to recognize and classify sign language gestures in real-time.
 
 ## Features
 
