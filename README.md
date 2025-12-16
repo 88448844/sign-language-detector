@@ -65,7 +65,7 @@ Finally, run the `inference_classifier.py` script to see the sign language detec
 ```bash
 python inference_classifier.py
 ```
-
+### 5. Like the Repo :)
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
